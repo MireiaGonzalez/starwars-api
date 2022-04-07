@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Planet, Character, Favorite
 #from models import Person
 
 app = Flask(__name__)
@@ -30,14 +30,66 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+#ENDPOINTS
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+#Get all characters
+@app.route('/characters',methods=['GET'])
+def get_characters():
+    all_characters = []
+    characters = Character.query.all()
+    for character in characters:
+        all_characters.append(character.serialize())
+    return jsonify(all_characters), 200
 
-    return jsonify(response_body), 200
+#Get character
+@app.route('/characters/<character_id>', methods=['GET'])
+def get_character(character_id):
+    character = Character.query.get(character_id)
+    return jsonify(character.serialize()), 200
+
+#Get all planets
+@app.route('/planets',methods=['GET'])
+def get_planets():
+    all_planets = []
+    planets = Planet.query.all()
+    for planet in planets:
+        all_planets.append(planet.serialize())
+    return jsonify(all_planets), 200
+
+#Get planet
+@app.route('/planets/<planet_id>', methods=['GET'])
+def get_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    return jsonify(planet.serialize()), 200
+
+#Get all users
+@app.route('/users',methods=['GET'])
+def get_users():
+    all_users = []
+    users = User.query.all()
+    for user in users:
+        all_users.append(user.serialize())
+    return jsonify(all_users), 200
+
+#Get user
+@app.route('/users/<user_id>', methods=['GET'])
+def get_user(user_id):
+    user=User.query.get(user_id)
+    return jsonify(user.serialize()), 200
+
+#Get user favourites
+@app.route('/<user_id>/favorites',methods=['GET'])
+def get_user_favorites(user_id):
+    favorites_list = []
+    favorites = Favorite.query.filter(Favorite.user_id==user_id)
+    for favorite in favorites:
+        favorites_list.append(favorite.serialize())
+    return jsonify(favorites_list), 200
+
+
+
+
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
