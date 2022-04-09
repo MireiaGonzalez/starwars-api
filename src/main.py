@@ -30,11 +30,12 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
 #ENDPOINTS
 
 #Get all characters
 @app.route('/characters',methods=['GET'])
-def get_characters():
+def get_all_characters():
     all_characters = []
     characters = Character.query.all()
     for character in characters:
@@ -49,7 +50,7 @@ def get_character(character_id):
 
 #Get all planets
 @app.route('/planets',methods=['GET'])
-def get_planets():
+def get_all_planets():
     all_planets = []
     planets = Planet.query.all()
     for planet in planets:
@@ -64,7 +65,7 @@ def get_planet(planet_id):
 
 #Get all users
 @app.route('/users',methods=['GET'])
-def get_users():
+def get_all_users():
     all_users = []
     users = User.query.all()
     for user in users:
@@ -86,9 +87,37 @@ def get_user_favorites(user_id):
         favorites_list.append(favorite.serialize())
     return jsonify(favorites_list), 200
 
+#Post new favourite planet
+@app.route('/favorites/planets', methods=['POST'])
+def new_favorite_planet():
+    body = request.get_json()
+    new_fav_planet = Favorite(planet_id = body['planet_id'], user_id = body['user_id'])
+    db.session.add(new_favorite_planet)
+    db.session.commit()
+    return jsonify(new_favorite_planet.serialize()), 200
 
+#Post new favourite character
+@app.route('/favorites/characters', methods=['POST'])
+def new_favorite_character():
+    body = request.get_json()
+    new_fav_character = Favorite(character_id = body['character_id'], user_id = body['user_id'])
+    db.session.add(new_favorite_character)
+    db.session.commit()
+    return jsonify(new_favorite_character.serialize()), 200
 
+#Delete fav planet
+@app.route('/<user_id>/favorites/planets/<planet_id>', methods=['DELETE'])
+def delete_planet_favourite(user_id, planet_id):
+    Favorite.query.filter(Favorite.planet_id == planet_id).delete()
+    db.session.commit()
+    return jsonify('The planet has been successfully removed from favourites'), 200
 
+#Delete fav character
+@app.route('/<user_id>/favorites/characters/<character_id>', methods=['DELETE'])
+def delete_favourite_char(user_id, character_id):
+    Favorite.query.filter(Favorite.character_id == character_id).delete()
+    db.session.commit()
+    return jsonify('The character has been successfully removed from favourites'), 200
 
 
 # this only runs if `$ python src/main.py` is executed

@@ -20,7 +20,7 @@ class User(db.Model):
 
 class Planet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50),nullable=False, unique=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
     diameter = db.Column(db.Integer )
     rotation_period = db.Column(db.Integer )
     orbital_period = db.Column(db.Integer )
@@ -52,7 +52,7 @@ class Planet(db.Model):
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50),nullable=False, unique=True)    
+    name = db.Column(db.String(50), nullable=False, unique=True)    
     height = db.Column(db.Integer)
     mass = db.Column(db.Integer)
     hair_color = db.Column(db.String(20))
@@ -62,8 +62,8 @@ class Character(db.Model):
     gender = db.Column(db.String(20))
     homeworld = db.Column(db.String(50))
     url = db.Column(db.String(250))
-    planet_id = db.Column(db.Integer,db.ForeignKey('planet.id'))
-    planet = db.relationship('Planet',backref='character')
+    planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
+    planet = db.relationship('Planet', backref='character')
 
     def __repr__(self):
         return '<Character %r>' % self.id
@@ -87,9 +87,9 @@ class Character(db.Model):
 
 class Favorite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    planet_id = db.Column(db.Integer,db.ForeignKey('planet.id'))
-    character_id = db.Column(db.Integer,db.ForeignKey('character.id'))
-    user_id  =db.Column(db.Integer,db.ForeignKey('user.id'))
+    planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
+    user_id  = db.Column(db.Integer, db.ForeignKey('user.id'))
     planet = db.relationship('Planet', backref="favorite")
     character = db.relationship('Character', backref="favorite")
     user = db.relationship('User', backref="favorite")
